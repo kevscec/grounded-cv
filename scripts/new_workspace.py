@@ -79,9 +79,19 @@ def main() -> int:
         if src.is_file():
             copy(src, WORKSPACE / "knowledge-base" / filename, created, skipped)
 
-    copy(TEMPLATES / "cv-build" / "design.yaml", WORKSPACE / "cv" / "design.yaml", created, skipped)
-    copy(TEMPLATES / "cv-build" / "CONTENT_MAP.md", WORKSPACE / "cv" / "CONTENT_MAP.md", created, skipped)
-    copy(TEMPLATES / "config" / "redlines.example.yaml", WORKSPACE / "redlines.yaml", created, skipped)
+    if args.from_example:
+        # Seed a workspace that actually verifies: the sample CV and the redlines that match
+        # it. Copying the blank template redlines here would leave candidate_name pointing at
+        # a different person, and omitting the CV leaves verify.py with nothing to check.
+        example_cv = ROOT / "examples" / "sample-profile" / "cv"
+        for src in sorted(example_cv.glob("*.yaml")):
+            copy(src, WORKSPACE / "cv" / src.name, created, skipped)
+        copy(TEMPLATES / "cv-build" / "CONTENT_MAP.md", WORKSPACE / "cv" / "CONTENT_MAP.md", created, skipped)
+        copy(ROOT / "examples" / "sample-profile" / "redlines.yaml", WORKSPACE / "redlines.yaml", created, skipped)
+    else:
+        copy(TEMPLATES / "cv-build" / "design.yaml", WORKSPACE / "cv" / "design.yaml", created, skipped)
+        copy(TEMPLATES / "cv-build" / "CONTENT_MAP.md", WORKSPACE / "cv" / "CONTENT_MAP.md", created, skipped)
+        copy(TEMPLATES / "config" / "redlines.example.yaml", WORKSPACE / "redlines.yaml", created, skipped)
 
     for path in created:
         print(f"  created  {path}")
@@ -90,8 +100,13 @@ def main() -> int:
 
     print()
     if args.from_example:
-        print("Workspace seeded from the sample profile. That profile is fictional - replace")
-        print("its content with your own before generating anything you intend to send.")
+        print("Workspace seeded from the sample profile, including a CV that renders and the")
+        print("redlines that match it. Check it end to end with:")
+        print()
+        print("  python scripts/verify.py")
+        print()
+        print("That profile is fictional - replace its content with your own before generating")
+        print("anything you intend to send.")
     else:
         print(f"Workspace ready ({args.tier} tier). Next:")
         print("  1. Edit workspace/redlines.yaml - your name, contacts, and anything that")

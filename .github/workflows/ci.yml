@@ -60,6 +60,15 @@ jobs:
             --cv-dir examples/sample-profile/cv \
             --redlines examples/sample-profile/redlines.yaml
 
+      - name: The quickstart path works end to end
+        # "python scripts/new_workspace.py --from-example" followed by "python scripts/verify.py"
+        # is the first thing a new visitor runs. It shipped broken once - the seeded workspace
+        # had no CV to verify and the wrong redlines - so CI now walks it verbatim.
+        run: |
+          rm -rf workspace && mkdir -p workspace
+          python scripts/new_workspace.py --from-example
+          python scripts/verify.py
+
       - name: No personal data in the repository
         # The framework's own rule, applied to itself. Exempt: examples/ (fictional, uses
         # example.com), the hook and the test suite, which define and exercise these patterns.

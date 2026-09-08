@@ -87,8 +87,11 @@ flowchart TD
 ```
 
 The important design choice is that the agent does not decide whether a sentence is safe while
-it is writing the CV. The safety decision was already made in the knowledge base: tier, source,
-attribution and redlines travel with the claim before any CV variant exists.
+it is writing the CV. Two separate things make that decision earlier and later: **tier, source
+and attribution travel with the claim** from the moment it is captured, so a CV line inherits
+how strong it is allowed to be — and **redlines are checked afterwards**, against the rendered
+PDF's text layer, so what must never appear is caught by the build rather than by whoever is
+paying attention.
 
 ## Your data never enters this repo
 
