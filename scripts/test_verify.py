@@ -112,6 +112,13 @@ def main() -> int:
     if not shutil.which("rendercv"):
         print("rendercv is not on PATH - cannot run the verification test suite")
         return 1
+    if not shutil.which("pdftotext"):
+        print(
+            "pdftotext is not on PATH - cannot run the negative controls that depend on "
+            "the PDF text layer. Install Poppler, then re-run this suite. "
+            "scripts/verify.py can still run without pdftotext, but it will skip those checks."
+        )
+        return 1
 
     failures = 0
     with tempfile.TemporaryDirectory() as raw_tmp:

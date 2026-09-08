@@ -56,8 +56,10 @@ sounds true.** Feeding an AI's confident prose back into another AI compounds it
 
 ```bash
 npx skills add rendercv/rendercv-skill      # the renderer's own skill
-npx skills add kevscec/grounded-cv # this framework
+npx skills add kevscec/grounded-cv          # this framework
 uv tool install "rendercv[full]" --python 3.13
+python -m pip install -r scripts/requirements.txt
+python scripts/check_environment.py
 ```
 
 Then point your agent at the repo and say what you want:
@@ -65,6 +67,28 @@ Then point your agent at the repo and say what you want:
 > *"Read AGENTS.md. I want to build my career knowledge base."*
 
 The agent picks up from there. Full walkthrough in [`docs/01-quickstart.md`](docs/01-quickstart.md).
+
+## How it works
+
+```mermaid
+flowchart TD
+    material["Old CVs, LinkedIn export, reviews, projects"] --> kb["Career knowledge base"]
+    interview["Agent interview"] --> kb
+    kb --> audit["cv-kb-audit: grade, reconcile, record gaps"]
+    audit --> master["cv-master-build: content map, then master CV"]
+    posting["Job posting"] --> fit{"cv-role-fit"}
+    kb --> fit
+    fit -- "Weak fit" --> stop["Stop: do not apply"]
+    fit -- "Strong / Good / Stretch" --> tailor["cv-tailor: reorder and subset, never invent"]
+    master --> tailor
+    tailor --> verify{"cv-verify"}
+    verify -- "fails" --> tailor
+    verify -- "passes" --> send["Human sends the application"]
+```
+
+The important design choice is that the agent does not decide whether a sentence is safe while
+it is writing the CV. The safety decision was already made in the knowledge base: tier, source,
+attribution and redlines travel with the claim before any CV variant exists.
 
 ## Your data never enters this repo
 
@@ -82,6 +106,7 @@ commits that touch it. See [`docs/06-privacy.md`](docs/06-privacy.md).
 | [The workflow](docs/05-workflow.md) | Phases, and which skill runs when |
 | [Privacy](docs/06-privacy.md) | What stays on your machine |
 | [Sources](docs/07-sources.md) | Every external claim, cited |
+| [Framework design notes](docs/08-framework-design.md) | How the repo is structured for public reuse |
 
 ## See it working
 

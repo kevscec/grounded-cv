@@ -6,14 +6,16 @@ The first hour, end to end.
 
 ```bash
 npx skills add rendercv/rendercv-skill        # the renderer's own agent skill
-npx skills add kevscec/grounded-cv   # this framework
+npx skills add kevscec/grounded-cv            # this framework
 uv tool install "rendercv[full]" --python 3.13
-pip install -r scripts/requirements.txt
+python -m pip install -r scripts/requirements.txt
+python scripts/check_environment.py
 ```
 
-Optional but recommended: [Poppler](https://poppler.freedesktop.org/) for `pdftotext`. Without
-it the verifier still runs, but skips the checks that read the PDF the way an ATS does — which
-are the ones that catch the expensive mistakes.
+Optional but strongly recommended: [Poppler](https://poppler.freedesktop.org/) for `pdftotext`.
+Without it the verifier still runs, but skips the checks that read the PDF the way an ATS does —
+which are the ones that catch the expensive mistakes. `check_environment.py` tells you plainly
+whether that part of verification will run on your machine.
 
 Enable the pre-commit hook, which stops personal data reaching this repository:
 
@@ -87,8 +89,9 @@ python scripts/verify.py
 
 ```bash
 python scripts/new_workspace.py --from-example
+python scripts/verify.py
 ```
 
 Seeds your workspace from `examples/sample-profile/` — a fictional profile with a complete
-knowledge base, a worked fit assessment and a rendered CV. Run the whole loop against it, then
-replace the content with your own.
+knowledge base, a worked fit assessment and a rendered CV — and then verifies the rendered output.
+Run the whole loop against it, then replace the content with your own.
