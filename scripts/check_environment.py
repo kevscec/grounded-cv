@@ -15,28 +15,38 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 
 
-def command_version(command: str, args: list[str]) -> tuple[bool, str]:
+def command_version(command: str, args: list[str], *, trust_exit_code: bool = True) -> tuple[bool, str]:
+    """Report whether a command is usable, and its version banner.
+
+    `trust_exit_code=False` is for tools whose version flag exits non-zero by design.
+    `pdftotext -v` is one: it prints its banner to stderr and exits 99, because that flag is
+    really the "no input file given" path. Treating that as a failure told correctly
+    configured users to install Poppler when they already had a working copy.
+    """
     exe = shutil.which(command)
     if not exe:
         return False, "not found"
     try:
         result = subprocess.run([exe, *args], capture_output=True, text=True, timeout=20)
     except Exception as exc:  # pragma: no cover - defensive diagnostic
-        return False, f"found at {exe}, but version check failed: {exc}"
+        return False, f"found at {exe}, but it could not be executed: {exc}"
     output = (result.stdout or result.stderr).strip()
     line = (output.splitlines() or [exe])[0]
-    if result.returncode != 0:
+    if trust_exit_code and result.returncode != 0:
         return False, f"found at {exe}, but version check exited {result.returncode}: {line}"
     return True, line
 
 
 def main() -> int:
-    checks = [
-        ("python", True, True, f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"),
-    ]
+    version = f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
+    # Not a hard failure: rendercv is commonly installed under its own managed interpreter
+    # (uv tool install --python 3.13) while these scripts run on the system python.
+    python_ok = sys.version_info >= (3, 9)
+    checks = [("python", python_ok, False, version)]
 
     rendercv_ok, rendercv_msg = command_version("rendercv", ["--version"])
-    pdftotext_ok, pdftotext_msg = command_version("pdftotext", ["-v"])
+    # pdftotext -v exits 99 on success, so presence and executability are what count.
+    pdftotext_ok, pdftotext_msg = command_version("pdftotext", ["-v"], trust_exit_code=False)
 
     checks.extend([
         ("rendercv", rendercv_ok, True, rendercv_msg),
