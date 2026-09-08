@@ -14,7 +14,11 @@ repeatable.
 | `templates/` | New users | Blank-but-structured starting material |
 | `examples/sample-profile/` | New users and contributors | A complete fictional profile that shows what good output looks like |
 | `scripts/verify.py` | Users before sending a CV | Enforce the rules machines can check |
-| `.github/workflows/ci.yml` | Contributors and maintainers | Prove skills load, the verifier fires, and the sample still renders |
+| `.github/workflows/ci.yml` | Contributors and maintainers | Prove skills load, the verifier fires, the sample still renders, and the quickstart path still works |
+| `scripts/new_workspace.py` | New users | The first command anyone runs; scaffolds `workspace/` from templates or from the sample profile |
+| `workspace/` | The user, only | Where their own knowledge base, CVs and applications live. Gitignored — never part of the public repo |
+| `.githooks/pre-commit` | Everyone with a clone | Refuses commits that touch `workspace/` or that carry contact details. This is what makes the privacy property structural rather than a request |
+| `docs/` | Anyone asking why | The reasoning behind the evidence system, the ATS rules and the sources |
 
 ## Why this is a framework, not just a prompt
 
@@ -30,6 +34,16 @@ The difference is where the control lives:
 That split keeps the repo honest: AI helps with extraction, structure, judgement and drafting,
 but the most important safety rules are represented as data and checks.
 
+## Start at five files, not sixteen
+
+The knowledge-base schema has sixteen files, and handing a new user sixteen blank templates is
+how they abandon this on day one. `templates/knowledge-base/README.md` defines a growth path
+instead: five core files that are already enough to generate a defensible CV, four more added
+as material accumulates, and the rest only when they earn their place.
+
+`scripts/new_workspace.py --tier core|recommended|all` implements it. A file with nothing in it
+is worse than a missing file, because it looks like a question that was answered.
+
 ## The agent workflow at a glance
 
 ```mermaid
@@ -39,6 +53,8 @@ flowchart TD
     B -->|Audit claims| D[cv-kb-audit]
     B -->|Master CV| E[cv-master-build]
     B -->|Job posting| F[cv-role-fit]
+    C --> D
+    D --> E
     F -->|Worth applying| G[cv-tailor]
     F -->|Weak fit| H[Stop and explain]
     G --> I[cv-verify]
@@ -56,6 +72,11 @@ A useful change should strengthen one of these properties:
 - Honesty under pressure: a team result cannot become an individual result by wording drift.
 - Privacy: personal career data stays in `workspace/`, not in the public repo.
 - Reproducibility: examples, templates and checks still work for a new user.
-- Portability: plain Markdown/YAML first; tool-specific assumptions stay isolated.
+- Portability: plain Markdown and YAML first, so the knowledge base outlives any one tool.
+  Rendering is deliberately RenderCV-only for now — the seam exists, a second backend is out of
+  scope until it pays for itself.
 
 If a change only makes generated prose sound stronger, it probably belongs outside this repo.
+
+These are the design properties. `CONTRIBUTING.md` says the same thing from the contributor's
+side, with the checks a pull request has to pass — keep the two in step if either changes.
