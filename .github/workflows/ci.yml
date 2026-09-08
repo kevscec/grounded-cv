@@ -46,6 +46,9 @@ jobs:
           pip install "rendercv[full]"
           pip install -r scripts/requirements.txt
 
+      - name: Environment check
+        run: python scripts/check_environment.py
+
       - name: Negative controls - every check must fire on a real violation
         # This runs first. A verifier that passes everything would also pass the example,
         # so proving the checks fire is the more meaningful test.
