@@ -36,15 +36,20 @@ but the most important safety rules are represented as data and checks.
 
 ## Start at five files, not sixteen
 
-The knowledge-base schema has sixteen files, and handing a new user sixteen blank templates is
-how they abandon this on day one. `templates/knowledge-base/README.md` defines a growth path
-instead: five core files that are already enough to generate a defensible CV, four more added
-as material accumulates, and the rest only when they earn their place.
+The schema has sixteen knowledge-base files, and handing a new user sixteen blank templates is
+how they abandon this on day one. The growth path exists so the first session produces something
+usable: five core files are already enough to generate a defensible CV.
 
-`scripts/new_workspace.py --tier core|recommended|all` implements it. A file with nothing in it
-is worse than a missing file, because it looks like a question that was answered.
+The path itself is specified in `templates/knowledge-base/README.md` and implemented by
+`scripts/new_workspace.py --tier core|recommended|all`. The reasoning is in
+[the knowledge base doc](03-knowledge-base.md).
 
 ## The agent workflow at a glance
+
+`AGENTS.md` routes an agent with a lookup table, and the README shows how work flows through
+the system. This is the third view and the one neither of those gives: what an agent does from
+a cold start, including the loop it stays in until the verifier passes.
+
 
 ```mermaid
 flowchart TD

@@ -44,30 +44,6 @@ sounds true.** Feeding an AI's confident prose back into another AI compounds it
 - **Not a way to make a thin CV look strong.** It is a way to make a strong CV *survive
   scrutiny* — and, when a role does not fit, to tell you so before you spend an afternoon on it.
 
-## Requirements
-
-- Python 3.12+ (RenderCV requires it; [`uv`](https://docs.astral.sh/uv/) handles this for you)
-- An AI agent that supports Agent Skills — Claude Code, Codex, Cursor, Copilot, VS Code,
-  Gemini CLI, OpenCode, Goose and many others
-- Optional: `pdftotext` (Poppler) for text-layer verification; the verifier degrades to a
-  warning without it
-
-## Quickstart
-
-```bash
-npx skills add rendercv/rendercv-skill      # the renderer's own skill
-npx skills add kevscec/grounded-cv          # this framework
-uv tool install "rendercv[full]" --python 3.13
-python -m pip install -r scripts/requirements.txt
-python scripts/check_environment.py
-```
-
-Then point your agent at the repo and say what you want:
-
-> *"Read AGENTS.md. I want to build my career knowledge base."*
-
-The agent picks up from there. Full walkthrough in [`docs/01-quickstart.md`](docs/01-quickstart.md).
-
 ## How it works
 
 ```mermaid
@@ -92,6 +68,30 @@ and attribution travel with the claim** from the moment it is captured, so a CV 
 how strong it is allowed to be — and **redlines are checked afterwards**, against the rendered
 PDF's text layer, so what must never appear is caught by the build rather than by whoever is
 paying attention.
+
+## Requirements
+
+- Python 3.12+ (RenderCV requires it; [`uv`](https://docs.astral.sh/uv/) handles this for you)
+- An AI agent that supports Agent Skills — Claude Code, Codex, Cursor, Copilot, VS Code,
+  Gemini CLI, OpenCode, Goose and many others
+- Optional: `pdftotext` (Poppler) for text-layer verification; the verifier degrades to a
+  warning without it
+
+## Quickstart
+
+```bash
+npx skills add rendercv/rendercv-skill      # the renderer's own skill
+npx skills add kevscec/grounded-cv          # this framework
+uv tool install "rendercv[full]" --python 3.13
+python -m pip install -r scripts/requirements.txt
+python scripts/check_environment.py
+```
+
+Then point your agent at the repo and say what you want:
+
+> *"Read AGENTS.md. I want to build my career knowledge base."*
+
+The agent picks up from there. Full walkthrough in [`docs/01-quickstart.md`](docs/01-quickstart.md).
 
 ## Your data never enters this repo
 
