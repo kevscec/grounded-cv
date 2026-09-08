@@ -1,0 +1,36 @@
+# ---------------------------------------------------------------------------
+# The user's own career data. Never committed to this repository.
+# See docs/06-privacy.md. Enforced by .githooks/pre-commit.
+# ---------------------------------------------------------------------------
+workspace/
+!workspace/.gitkeep
+!workspace/README.md
+
+# Rendered output
+*.pdf
+*.png
+*.typ
+!examples/**/*.pdf
+!examples/**/*.png
+
+# Common personal-document drops
+*_CV.pdf
+*_Resume.pdf
+*resume*.docx
+*cv*.docx
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+
+# Editors and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+desktop.ini

@@ -1,0 +1,39 @@
+# redlines.yaml for the fictional sample profile.
+# Copy templates/config/redlines.example.yaml for your own.
+
+candidate_name: "Robin Doe"
+
+required_contact:
+  - "robin.doe@example.com"
+  - "linkedin.com/in/example-robin-doe"
+  - "github.com/example-robin-doe"
+
+page_limits:
+  default: 2
+  "*1page*": 1
+
+forbidden:
+  - text: "ORION"
+    reason: "internal system name - translate via the glossary"
+  - text: "DELTA-FEED"
+    reason: "internal system name - translate via the glossary"
+  - text: "warehouse_prod_v2"
+    reason: "internal table name"
+  - text: "Senior Data Engineer"
+    reason: "not a title held - see 02_POSITIONING section 2"
+  - text: "Certified in Snowflake"
+    reason: "not certified - see 01_IDENTITY_AND_FACTS section 4"
+
+team_metrics:
+  - "900"
+
+attribution_phrases:
+  - "contributed to"
+  - "part of the team"
+  - "co-owned"
+  - "jointly delivered"
+  - "team recognition"
+
+forbidden_patterns:
+  - pattern: '\b\d-\d{4}-\d{4}\b'
+    reason: "national ID number"

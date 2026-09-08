@@ -1,0 +1,101 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/rendercv/rendercv/refs/tags/v2.8/schema.json
+#
+# FICTIONAL SAMPLE. Robin Doe does not exist. See ../README.md.
+#
+# Every line here traces to the knowledge base in ../knowledge-base/.
+# Bullets are used as written from 13_BULLET_LIBRARY.md; no verb has been strengthened.
+
+cv:
+  name: Robin Doe
+  headline: Data Engineer
+  location: Lisbon, Portugal
+  email: robin.doe@example.com
+  social_networks:
+    - network: LinkedIn
+      username: example-robin-doe
+    - network: GitHub
+      username: example-robin-doe
+
+  sections:
+    Summary:
+      - Data engineer who owns a batch platform end to end — 14 production pipelines moving
+        roughly 40 million rows a day into a retail analytics warehouse, from design through
+        on-call. Reduced pipeline incidents from 31 to 4 a quarter by moving data quality checks
+        upstream, and co-owned a cost effort that cut warehouse compute spend by 22%. dbt
+        certified. Fully remote from Lisbon, full overlap with UK and EU hours.
+
+    Skills:
+      - label: Pipelines & Orchestration
+        details: Airflow (deployment ownership, DAG conventions, SLAs, alerting) · Python ·
+          Batch and micro-batch pipelines · Incremental and partitioned loads · Backfill tooling
+      - label: Warehouse & Modelling
+        details: Snowflake · dbt · SQL · Dimensional modelling · Source-to-target mapping ·
+          Query profiling and cost optimization
+      - label: Quality & Reliability
+        details: dbt tests · Freshness and volume anomaly detection · Great Expectations ·
+          On-call and incident response · PagerDuty · CI for data (GitHub Actions)
+      - label: Platform
+        details: AWS · Terraform (maintenance) · Git · Kafka (consumer-side)
+
+    Experience:
+      - company: Northwind Retail Group
+        position: Data Engineer
+        location: Remote — Lisbon
+        start_date: 2024-03
+        end_date: present
+        summary: Data Platform team. Owns the batch platform behind retail analytics.
+        highlights:
+          - Reduced pipeline incidents from **31 to 4 per quarter** by adding freshness and
+            volume anomaly checks upstream of the transformation layer, so failures surface
+            before they reach a dashboard.
+          - Co-owned a two-quarter cost-reduction effort that cut warehouse compute spend by
+            **22%**, through warehouse right-sizing, query pruning and moving three unused daily
+            jobs to weekly.
+          - Own **14 production pipelines** end to end — design, deployment, on-call and
+            improvement — moving roughly **40 million rows a day** into the retail analytics
+            warehouse.
+          - Added **180+ tests** to the transformation layer — uniqueness, referential
+            integrity, accepted ranges and freshness — and made a failing test block the
+            deployment rather than warn.
+          - Re-partitioned the largest fact table by event date rather than load date, cutting a
+            full backfill rerun from **nine hours to forty minutes** and making reprocessing a
+            routine operation rather than an overnight event.
+          - Contributed to a self-serve reporting initiative that removed roughly **900 hours a
+            year** of manual reporting across the commercial teams.
+
+      - company: Contoso Logistics
+        position: Data Engineer
+        location: Lisbon, Portugal
+        start_date: 2023-01
+        end_date: 2024-02
+        highlights:
+          - Consolidated **11 source systems** into a single warehouse model, replacing per-team
+            extracts that had drifted into four incompatible definitions of "order".
+          - Jointly delivered the analyst onboarding path — documented models, a query cookbook
+            and a sandbox schema — cutting time to a first independent query from three weeks to
+            four days.
+
+      - company: Contoso Logistics
+        position: Data Analyst
+        location: Lisbon, Portugal
+        start_date: 2021-09
+        end_date: 2022-12
+        highlights:
+          - Built the reporting layer for the operations team, then rebuilt it as modelled
+            tables when the ad-hoc queries behind it became unmaintainable — the work that led
+            to the move into data engineering.
+
+    Education:
+      - institution: Universidade de Lisboa
+        area: Computer Science
+        degree: BSc
+        location: Portugal
+        start_date: 2018-09
+        end_date: 2021-07
+
+    Certifications & Languages:
+      - label: Certifications
+        details: dbt Fundamentals (dbt Labs, 2023) · AWS Certified Cloud Practitioner (Amazon
+          Web Services, 2022)
+      - label: Languages
+        details: Portuguese — native · English — C1 · Spanish — B1

@@ -1,0 +1,56 @@
+#!/bin/sh
+#
+# grounded-cv pre-commit hook
+#
+# The framework's own principle applied to itself: the rule that personal career data never
+# enters this repository is enforced by the tooling, not by remembering.
+#
+# Install with:  git config core.hooksPath .githooks
+#
+# To bypass deliberately (you almost never should):  git commit --no-verify
+
+staged=$(git diff --cached --name-only --diff-filter=ACM)
+[ -z "$staged" ] && exit 0
+
+fail=0
+
+# 1. Nothing from workspace/ may ever be committed.
+ws=$(printf '%s\n' "$staged" | grep -E '^workspace/' | grep -vE '^workspace/(\.gitkeep|README\.md)$')
+if [ -n "$ws" ]; then
+  echo "BLOCKED: these files live in workspace/, which holds personal career data:"
+  printf '  %s\n' $ws
+  echo "  See docs/06-privacy.md. If this is genuinely framework material, move it out of workspace/."
+  fail=1
+fi
+
+# 2. Contact details are a strong signal that a real profile leaked into the framework.
+#    examples/ is exempt: the sample profile is fictional and uses example.com addresses.
+scan=$(printf '%s\n' "$staged" | grep -vE '^(examples/|docs/06-privacy\.md|\.githooks/)')
+for f in $scan; do
+  [ -f "$f" ] || continue
+
+  if grep -nEq '[A-Za-z0-9._%+-]+@(gmail|outlook|hotmail|yahoo|proton|icloud)\.[A-Za-z]{2,}' "$f"; then
+    echo "BLOCKED: $f contains a personal email address."
+    fail=1
+  fi
+
+  # International phone numbers: + followed by 8-15 digits, spaces or dashes allowed.
+  if grep -nEq '\+[0-9][0-9 ()-]{7,17}[0-9]' "$f"; then
+    echo "BLOCKED: $f looks like it contains a phone number."
+    fail=1
+  fi
+
+  # National ID patterns (e.g. 1-2345-6789) and bare 9-digit runs.
+  if grep -nEq '\b[0-9]-[0-9]{4}-[0-9]{4}\b' "$f"; then
+    echo "BLOCKED: $f looks like it contains a national ID number."
+    fail=1
+  fi
+done
+
+if [ "$fail" -ne 0 ]; then
+  echo ""
+  echo "Commit refused. Nothing was committed."
+  exit 1
+fi
+
+exit 0

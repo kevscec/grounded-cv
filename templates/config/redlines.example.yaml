@@ -1,0 +1,65 @@
+# redlines.yaml — what must never appear in a generated document.
+#
+# Copy to workspace/redlines.yaml and fill in. `scripts/verify.py` reads it and fails the
+# build on any hit in a rendered PDF's text layer.
+#
+# This file is personal data: it names colleagues, clients and internal systems. It lives in
+# workspace/ and is never committed.
+
+# The name that must be the first line of the extracted text stream. An ATS reads the name
+# field from the top of the text layer, so anything rendering above it is a defect.
+candidate_name: "Ada Lovelace"
+
+# Contact details that must survive text extraction. If one of these is drawn as an icon or
+# placed in a page header, it will not reach the recruiter's screen.
+required_contact:
+  - "ada@example.com"
+  - "linkedin.com/in/example"
+  - "github.com/example"
+
+# Page limits per CV variant. Keys are matched against the YAML filename.
+page_limits:
+  default: 2
+  "*1page*": 1
+
+# Literal strings that must never appear. Case-insensitive substring match.
+forbidden:
+  # Colleagues, managers, clients
+  - text: "Jane Doe"
+    reason: "colleague name - never on an external document"
+
+  # Internal product and project code names
+  - text: "PROJECT-ATLAS"
+    reason: "internal code name - translate via the glossary"
+
+  # Figures decided as unpublishable
+  - text: "62.5"
+    reason: "a below-target metric this person decided not to publish"
+
+  # Titles not held
+  - text: "Chief Architect"
+    reason: "not a title held"
+
+  # Credentials not held
+  - text: "Certified in"
+    reason: "no certification beyond those documented"
+
+# Metrics belonging to a team. Each must appear in a sentence containing one of the
+# attribution phrases below, or the build fails.
+team_metrics:
+  - "900"
+  - "98.6"
+
+attribution_phrases:
+  - "contributed to"
+  - "part of the team"
+  - "co-owned"
+  - "jointly delivered"
+  - "team recognition"
+
+# Regex patterns that must never match. Defaults cover national ID formats.
+forbidden_patterns:
+  - pattern: '\b\d-\d{4}-\d{4}\b'
+    reason: "national ID number"
+  - pattern: '\b\d{9}\b'
+    reason: "possible national ID or passport number"
