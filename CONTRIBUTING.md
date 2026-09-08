@@ -40,8 +40,13 @@ build, not in a paragraph asking people to be careful.
    git config core.hooksPath .githooks
    ```
 
-2. **A new check needs a negative control.** Prove it fires on a planted violation. A check that
-   never fires is worse than no check, because it produces false confidence.
+2. **A new check needs a negative control.** Add it to `scripts/test_verify.py`, which plants a
+   violation for every check and asserts it is caught. A check that never fires is worse than no
+   check, because it produces false confidence.
+
+   ```bash
+   python scripts/test_verify.py
+   ```
 
 3. **Skills must pass the spec validator:**
 

@@ -1,5 +1,8 @@
 # grounded-cv
 
+[![CI](https://github.com/kevscec/grounded-cv/actions/workflows/ci.yml/badge.svg)](https://github.com/kevscec/grounded-cv/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+
 **An evidence-graded framework for AI-assisted CV generation.**
 
 Your AI agent interviews you, builds a knowledge base of your career where every claim is

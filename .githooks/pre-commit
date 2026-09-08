@@ -24,8 +24,11 @@ if [ -n "$ws" ]; then
 fi
 
 # 2. Contact details are a strong signal that a real profile leaked into the framework.
-#    examples/ is exempt: the sample profile is fictional and uses example.com addresses.
-scan=$(printf '%s\n' "$staged" | grep -vE '^(examples/|docs/06-privacy\.md|\.githooks/)')
+#    Exempt: examples/ (the sample profile is fictional and uses example.com),
+#    this hook, the privacy doc, and the test suite - those exist to define or
+#    exercise these very patterns, so a match inside them is correct, not a leak.
+scan=$(printf '%s
+' "$staged" | grep -vE '^(examples/|docs/06-privacy\.md|\.githooks/|scripts/test_verify\.py$)')
 for f in $scan; do
   [ -f "$f" ] || continue
 

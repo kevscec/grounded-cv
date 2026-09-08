@@ -1,0 +1,111 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  skills:
+    name: Agent Skills spec
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Validate every SKILL.md against the specification
+        run: python scripts/validate_skills.py
+
+  verify:
+    name: Verifier and negative controls
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install poppler
+        # pdftotext is how the verifier reads a PDF the way an ATS parser does. Without it
+        # the text-layer checks are skipped, so CI must have it.
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install "rendercv[full]"
+          pip install -r scripts/requirements.txt
+
+      - name: Negative controls - every check must fire on a real violation
+        # This runs first. A verifier that passes everything would also pass the example,
+        # so proving the checks fire is the more meaningful test.
+        run: python scripts/test_verify.py
+
+      - name: The sample profile renders and verifies
+        run: |
+          python scripts/verify.py \
+            --cv-dir examples/sample-profile/cv \
+            --redlines examples/sample-profile/redlines.yaml
+
+      - name: No personal data in the repository
+        # The framework's own rule, applied to itself. Exempt: examples/ (fictional, uses
+        # example.com), the hook and the test suite, which define and exercise these patterns.
+        run: |
+          EX="--exclude-dir=.git --exclude-dir=examples --exclude-dir=.githooks --exclude=test_verify.py"
+          if grep -rInE $EX '[A-Za-z0-9._%+-]+@(gmail|outlook|hotmail|yahoo|proton|icloud)\.[A-Za-z]{2,}' . ; then
+            echo "::error::A personal email address was found outside the exempt paths."
+            exit 1
+          fi
+          if grep -rInE $EX '\b[0-9]-[0-9]{4}-[0-9]{4}\b' . ; then
+            echo "::error::Something matching a national ID pattern was found."
+            exit 1
+          fi
+          echo "No personal data found."
+
+      - name: Upload the rendered sample CV
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sample-cv
+          path: examples/sample-profile/cv/out/**/*.pdf
+          if-no-files-found: ignore
+          retention-days: 7
+
+  links:
+    name: Internal documentation links
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Every relative link must resolve
+        run: |
+          python - <<'PY'
+          import re, pathlib, sys
+          bad = []
+          for md in pathlib.Path('.').rglob('*.md'):
+              if '.git' in md.parts:
+                  continue
+              for label, target in re.findall(r'\[([^\]]+)\]\(([^)]+)\)', md.read_text(encoding='utf-8')):
+                  if target.startswith(('http://', 'https://', '#', 'mailto:')):
+                      continue
+                  t = target.split('#')[0]
+                  if t and not (md.parent / t).exists():
+                      bad.append(f"{md.as_posix()}: [{label}]({target})")
+          if bad:
+              print("::error::Broken internal links:")
+              print("\n".join(bad))
+              sys.exit(1)
+          print("All internal links resolve.")
+          PY
